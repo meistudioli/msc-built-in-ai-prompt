@@ -1,4 +1,7 @@
 # msc-built-in-ai-prompt
+
+[![DeepScan grade](https://deepscan.io/api/teams/16372/projects/30594/branches/983824/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=16372&pid=30594&bid=983824)
+
 &lt;msc-built-in-ai-prompt /> is a web component based on [Chrome Built-in AI Prompt API](https://developer.chrome.com/docs/ai/prompt-api). Web developers could use &lt;msc-built-in-ai-prompt /> to connect with Gemini Nano and provide vivid features. &lt;msc-built-in-ai-prompt /> is a non-UI component. But it will provide current status in data-status. That means web developers have maximum creation to build UI throuth this information.
 
 ![<msc-built-in-ai-prompt />](https://blog.lalacube.com/mei/img/preview/msc-built-in-ai-prompt.png)
@@ -139,7 +142,7 @@ if (ai.status === 'unsupported') {
         },
         name: {
           type: 'string',
-          description: 'writw vivid product name (atleast 10 words)'
+          description: 'write vivid product name (at least 10 words)'
         }
       },
       required: ['product', 'name'],

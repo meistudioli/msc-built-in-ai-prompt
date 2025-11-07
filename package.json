@@ -1,0 +1,26 @@
+{
+  "name": "msc-built-in-ai-prompt",
+  "version": "1.0.0",
+  "description": "<msc-built-in-ai-prompt /> is a web component based on Chrome Built-in AI Prompt API. Web developers could use <msc-built-in-ai-prompt /> to connect with Gemini Nano and provide vivid features.",
+  "keywords": [
+    "web",
+    "front-end",
+    "web component",
+    "built-in ai",
+    "gemini"
+  ],
+  "homepage": "https://github.com/meistudioli/msc-built-in-ai-prompt#readme",
+  "bugs": {
+    "url": "https://github.com/meistudioli/msc-built-in-ai-prompt/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meistudioli/msc-built-in-ai-prompt.git"
+  },
+  "license": "MIT",
+  "author": "Paul Li",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

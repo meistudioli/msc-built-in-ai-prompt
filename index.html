@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Web Component: &lt;msc-built-in-ai-prompt /> - a web component based on Chrome Built-in AI Prompt API</title>
+<meta name="description" content="<msc-built-in-ai-prompt /> is a web component based on Chrome Built-in AI Prompt API. Web developers could use <msc-built-in-ai-prompt /> to connect with Gemini Nano and provide vivid features." />
+<script type="module" src="mjs/wc-msc-built-in-ai-prompt.js"></script>
+<link rel="stylesheet" href="https://blog.lalacube.com/mei/css/wc-base.css">
+<link rel="stylesheet" href="https://blog.lalacube.com/mei/css/layers/defaults.css">
+<link rel="stylesheet" href="https://blog.lalacube.com/mei/css/layers/buttons.css">
+<style>
+#hd,#ft{display:none;}
+body{position:relative;inline-size:100vw;block-size:100vh;margin:0;}
+
+.wrap {
+  inline-size: 100%;
+  max-inline-size: min(800px, calc(100% - 2em));
+  box-sizing: border-box;
+}
+
+.demo-wrap {
+  --accent-color: var(--dory);
+  --background-color: rgba(220 226 240);
+  
+  /* tip */
+  --tip: 'Drop image here.';
+  --opacity-normal: 0;
+  --opacity-active: 1;
+  --opacity: var(--opacity-normal);
+
+  --pointer-events-normal: none; 
+  --pointer-events-active: auto; 
+  --pointer-events: var(--pointer-events-normal);
+
+  @media (prefers-color-scheme: dark) {
+    --accent-color: 75 168 248;
+    --background-color: rgba(29 34 40);
+  }
+
+  position: relative;
+  inline-size: 100%;
+  margin: 12em auto;
+  /*padding-inline: 1.5em;*/
+  box-sizing: border-box;
+
+  .button__wrap {
+    --picker-display: none;
+    --warn-display: none;
+
+    &:has(msc-built-in-ai-prompt[data-status=available]) {
+      --picker-display: block;
+    }
+
+    &:has(msc-built-in-ai-prompt[data-status=unsupported]) {
+      --warn-display: flex;
+    }
+
+    position: relative;
+    inline-size: 100%;
+    aspect-ratio: 16/9;
+    background-color: var(--background-color);
+
+    border-radius: 1em;
+    display: grid;
+    place-content: center;
+
+    &.button__wrap--over {
+      --opacity: var(--opacity-active);
+      --pointer-events: var(--pointer-events-active);
+
+      overflow: hidden;
+    }
+
+    &::before {
+      content: var(--tip);
+
+      position: absolute;
+      inset: 0;
+      font-size: 1.125em;
+      color: rgba(255 255 255);
+      background-color: rgba(0 0 0/.75);
+      z-index: 1;
+      pointer-events: var(--pointer-events);
+
+      display: grid;
+      place-content: center;
+
+      opacity: var(--opacity);
+      will-change: opacity;
+      transition: opacity 200ms ease;
+    }
+
+    .product-vision-picker {
+      display: var(--picker-display);
+    }
+
+    .warn-unsupported {
+      color: rgba(var(--accent-color));
+      display: var(--warn-display);
+      align-items: center;
+      gap: .5em;
+
+      &::before {
+        content: '';
+        inline-size: 24px;
+        aspect-ratio: 1/1;
+        display: block;
+        background-color: rgba(var(--accent-color));
+        clip-path: path('M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z');
+      }
+    }
+  }
+}
+
+.product-vision {
+  --duration: .35s;
+  --timing-function: cubic-bezier(.6,-0.06,.76,1.36);
+  --delta: calc((44px / 2) + 1em);
+
+  --opacity-normal: 0;
+  --opacity-active: 1;
+  --opacity: var(--opacity-normal);
+
+  --scale-normal: .01;
+  --scale-active: 1;
+  --scale: var(--scale-normal);
+
+  &.product-vision--show {
+    --opacity: var(--opacity-active);
+    --scale: var(--scale-active);
+  }
+
+  position: absolute;
+  inset: calc(50% + var(--delta)) auto auto 50%;
+  inline-size: max(10em, 50%);
+  inline-size: 240px;
+  translate: -50% 0;
+  box-sizing: border-box;
+  border: 4px solid rgba(255 255 255);
+  transform-origin: 50% calc(var(--delta) * -1);
+  box-shadow: var(--shadow-elevations-2);
+
+  transition:
+    opacity var(--duration) var(--timing-function),
+    scale var(--duration) var(--timing-function);
+  will-change: opacity, scale;
+  opacity: var(--opacity);
+  scale: var(--scale);
+
+  border-radius: 1em;
+  z-index: 2000;
+}
+
+.product-vision-picker {
+  --button-text: 'Pick product image';
+  --loader-display: none;
+
+  &[inert] {
+    --button-text: 'Product image analyzing';
+    --loader-display: block;
+  }
+
+  position: relative;
+  inline-size: fit-content;
+  overflow: hidden;
+
+  input {
+    position: absolute;
+    inset-block-start: -100%;
+  }
+
+  .buttons {
+    &[data-type='secondary1'] {
+      --default-text-color: rgba(var(--accent-color));
+    }
+
+    display: flex;
+    gap: .5em;
+
+    span::before {
+      content: var(--button-text);
+    }
+
+    em {
+      font-size: 0;
+      inline-size: 24px;
+      aspect-ratio: 1 / 1;
+      display: block;
+      background-color: rgba(var(--accent-color));
+      overflow: hidden;
+      clip-path: path('M20 4v12H8V4h12m0-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.5 9.67l1.69 2.26 2.48-3.1L19 15H9zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z');
+    }
+  }
+
+  /* https://css-loaders.com/dots/ */
+  .loader {
+    width: 20px;
+    aspect-ratio: 2;
+    --_g: no-repeat radial-gradient(circle closest-side, rgba(var(--accent-color)) 90%, rgba(var(--accent-color)/0));
+    background: 
+      var(--_g) 0%   50%,
+      var(--_g) 50%  50%,
+      var(--_g) 100% 50%;
+    background-size: calc(100%/3) 50%;
+    animation: l3 1s infinite linear;
+    display: var(--loader-display);
+  }
+}
+
+@keyframes l3 {
+  20%{background-position:0%   0%, 50%  50%,100%  50%}
+  40%{background-position:0% 100%, 50%   0%,100%  50%}
+  60%{background-position:0%  50%, 50% 100%,100%   0%}
+  80%{background-position:0%  50%, 50%  50%,100% 100%}
+}
+
+msc-built-in-ai-prompt {
+  --info-text: 'Try AI image analysis';
+  --progress-text: '';
+  --loader-display: none;
+  --button-interactivity: auto;
+
+  &:not(:defined) {
+    display: none;
+  }
+
+  &[data-status=downloading][data-progress] {
+    --info-text: 'LLM downloading';
+    --progress-text: attr(data-progress) '%';
+    --loader-display: block;
+    --button-interactivity: inert;
+  }
+
+  .buttons {
+    &[data-type='secondary1'] {
+      --default-text-color: rgba(var(--accent-color));
+    }
+
+    display: flex;
+    gap: .5em;
+    interactivity: var(--button-interactivity);
+
+    span::before {
+      content: var(--info-text);
+    }
+
+    .icon {
+      font-size: 0;
+      inline-size: 24px;
+      aspect-ratio: 1 / 1;
+      display: block;
+      background-color: rgba(var(--accent-color));
+      overflow: hidden;
+      clip-path: path('M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z');
+    }
+  }
+
+  .loader {
+    width: 20px;
+    aspect-ratio: 2;
+    --_g: no-repeat radial-gradient(circle closest-side, rgba(var(--accent-color)) 90%, rgba(var(--accent-color)/0));
+    background: 
+      var(--_g) 0%   50%,
+      var(--_g) 50%  50%,
+      var(--_g) 100% 50%;
+    background-size: calc(100%/3) 50%;
+    animation: l3 1s infinite linear;
+    display: var(--loader-display);
+  }
+
+  .loaded-info {
+    display: var(--loader-display);
+
+    &::before {
+      content: var(--progress-text);
+    }
+  }
+}
+</style>
+</head>
+
+<body class="flex-center">
+<div class="wrap">
+  <div class="demo-wrap">
+    <div class="button__wrap" tabindex="0">
+      <!-- msc-built-in-ai-prompt -->
+      <msc-built-in-ai-prompt>
+        <button
+          type="button"
+          class="buttons"
+          data-type="secondary1"
+          data-size="large"
+        >
+          <em class="icon">image</em>
+          <span></span>
+          <div class="loader"></div>
+          <em class="loaded-info"></em>
+        </button>
+      </msc-built-in-ai-prompt>
+      <p class="warn-unsupported">Current browser does't support Built-in AI.</p>
+
+      <!-- picker -->
+      <label class="product-vision-picker">
+        <input type="file" name="product-vision" />
+        <div
+          type="button"
+          class="buttons"
+          data-type="secondary1"
+          data-size="large"
+          role="button"
+        >
+          <em>image</em>
+          <span></span>
+          <div class="loader"></div>
+        </div>
+      </label>
+      <img class="product-vision" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// import Mustache from 'https://blog.lalacube.com/mei/mjs/mustache.js';
+
+customElements.whenDefined('msc-built-in-ai-prompt').then(() => {
+  const ai = document.querySelector('msc-built-in-ai-prompt');
+  const label = document.querySelector('.product-vision-picker');
+  const input = document.querySelector('input[type=file][name=product-vision]');
+  const vision = document.querySelector('.product-vision');
+  const dropzone = document.querySelector('.button__wrap');
+
+  let productData = {};
+
+  if (ai.status === 'unsupported') {
+    return;
+  }
+
+  const analyze = async (blob) => {
+    const content = `Analyze what product in this image and provide vivid product name`;
+    const schema = {
+      type: 'object',
+      properties: {
+        product: {
+          type: 'string',
+          description: 'product'
+        },
+        name: {
+          type: 'string',
+          description: 'write vivid product name (at least 10 words)'
+        }
+      },
+      required: ['product', 'name'],
+      additionalProperties: false
+    };
+
+    console.clear();
+    performance.mark('analyze-started');
+    console.log('Starting product image analysis.');
+
+    // vision
+    window.URL.revokeObjectURL(vision.src);
+    vision.src = window.URL.createObjectURL(blob);
+    vision.classList.toggle('product-vision--show', true);
+
+    await ai.create({
+      initialPrompts: [
+        {
+          role: 'system',
+          content:
+            'You are a skilled analyst who correlates patterns across multiple images.',
+        },
+      ],
+      expectedInputs: [{ type: 'image' }],
+      multimodal: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              value: `Here's one image.`,
+            },
+            { type: 'image', value: blob },
+          ],
+        },
+      ]
+    });
+
+    let result = await ai.prompt(
+      content,
+      {
+        responseConstraint: schema
+      }
+    );
+
+    result = JSON.parse(result);
+
+    performance.mark('analyze-ended');
+    const analyzeMeasure = performance.measure('analyze-duration', 'analyze-started', 'analyze-ended');
+    console.log(`Product image analysis finished. It took ${Math.floor(analyzeMeasure.duration / 1000)} seconds.\n\n`);
+
+    productData = {
+      ...result,
+    };
+
+    console.log(`Here comes product information:`);
+    console.log(productData);
+  };
+
+  const inputHandler = async(blob) => {
+    label.inert = true;
+
+    // analyze
+    try {
+      await analyze(blob);
+    } catch(err) {
+      console.log(err);
+    }
+
+    label.inert = false;
+    input.value = '';
+  };
+
+  const onDnD = (evt) => {
+    const { type, target } = evt;
+
+    switch (type) {
+      case 'dragover': {
+        if (!label.inert) {
+          vision.classList.toggle('product-vision--show', false);
+          dropzone.classList.toggle('button__wrap--over', true);
+        }
+        break;
+      }
+
+      case 'dragleave': {
+        dropzone.classList.toggle('button__wrap--over', false);
+        break;
+      }
+    };
+  };
+
+  const handler = async (evt) => {
+    const { type, target } = evt;
+
+    switch (type) {
+      case 'dragover': {
+        evt.preventDefault();
+        break;
+      }
+
+      case 'drop': {
+        const { dataTransfer } = evt;
+
+        evt.preventDefault();
+        
+        if (label.inert || !dataTransfer.files.length) {
+          return;
+        }
+
+        dropzone.classList.toggle('button__wrap--over', false);
+
+        await inputHandler(dataTransfer.files[0]);
+        break;
+      }
+    };
+  };
+
+  // events
+  input.addEventListener('input',
+    async (evt) => {
+      const { files } = evt.target;
+
+      if (!files.length) {
+        return;
+      }
+
+      await inputHandler(files[0]);
+    }
+  );
+
+  ['dragover', 'drop'].forEach(
+    (event) => {
+      // dropzone
+      dropzone.addEventListener(event, handler, { capture:true });
+    }
+  );
+
+  ['dragover', 'dragleave'].forEach(
+    (event) => {
+      // document.body
+      document.body.addEventListener(event, onDnD, { capture:true });
+    }
+  );
+});
+</script>
+</body>
+
+</html>
