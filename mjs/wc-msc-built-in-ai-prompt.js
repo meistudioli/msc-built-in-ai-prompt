@@ -23,7 +23,7 @@ ${_wccss}
   display: var(--display);
 }
 
-:host(:not([data-status=unsupported],[data-status=available])) {
+:host(:not([data-status=unsupported],[data-status=available],[data-status=unavailable])) {
   --display: block;
 }
 
@@ -185,7 +185,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
   }
 
   async _onClick() {
-    if (this.status === 'unsupported') {
+    if (['unavailable', 'unsupported'].includes(this.status)) {
       throw new Error(`Current browser doesn't support Built-in AI.`);
     }
 
@@ -201,7 +201,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
   }
 
   async params() {
-    if (this.status === 'unsupported') {
+    if (['unavailable', 'unsupported'].includes(this.status)) {
       throw new Error(`Current browser doesn't support Built-in AI.`);
     }
 
@@ -209,7 +209,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
   }
 
   async measureInputUsage(content) {
-    if (this.status === 'unsupported') {
+    if (['unavailable', 'unsupported'].includes(this.status)) {
       throw new Error(`Current browser doesn't support Built-in AI.`);
     }
 
@@ -221,7 +221,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
   }
 
   async create(params = {}) {
-    if (this.status === 'unsupported') {
+    if (['unavailable', 'unsupported'].includes(this.status)) {
       throw new Error(`Current browser doesn't support Built-in AI.`);
     }
 
@@ -245,7 +245,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
   }
 
   async prompt(data, option = {}) {
-    if (this.status === 'unsupported') {
+    if (['unavailable', 'unsupported'].includes(this.status)) {
       throw new Error(`Current browser doesn't support Built-in AI.`);
     }
 
@@ -257,7 +257,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
   }
 
   async promptStreaming(data, option = {}) {
-    if (this.status === 'unsupported') {
+    if (['unavailable', 'unsupported'].includes(this.status)) {
       throw new Error(`Current browser doesn't support Built-in AI.`);
     }
 

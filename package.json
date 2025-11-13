@@ -1,6 +1,6 @@
 {
   "name": "msc-built-in-ai-prompt",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "<msc-built-in-ai-prompt /> is a web component based on Chrome Built-in AI Prompt API. Web developers could use <msc-built-in-ai-prompt /> to connect with Gemini Nano and provide vivid features.",
   "keywords": [
     "web",

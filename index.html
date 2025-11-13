@@ -320,8 +320,6 @@ msc-built-in-ai-prompt {
 </div>
 
 <script type="module">
-// import Mustache from 'https://blog.lalacube.com/mei/mjs/mustache.js';
-
 customElements.whenDefined('msc-built-in-ai-prompt').then(() => {
   const ai = document.querySelector('msc-built-in-ai-prompt');
   const label = document.querySelector('.product-vision-picker');
@@ -331,7 +329,7 @@ customElements.whenDefined('msc-built-in-ai-prompt').then(() => {
 
   let productData = {};
 
-  if (ai.status === 'unsupported') {
+  if (['unavailable', 'unsupported'].includes(ai.status)) {
     return;
   }
 

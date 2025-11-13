@@ -38,6 +38,7 @@ There will be serverial status to indicate Built-in AI status. Check `msc-built-
 - `downloadable`：Need to download LLM first (browser supported).
 - `downloading`：LLM downloading (browser supported).
 - `unsupported`：current browser doesn't support Built-in AI.
+- `unavailable`：current browser doesn't support Built-in AI.
 
 Once &lt;msc-built-in-ai-prompt /> in status: downloading, &lt;msc-built-in-ai-prompt /> will show download progress in attribute `data-progress`.
 
@@ -86,7 +87,7 @@ nodeB.appendChild(buttonTemplate.content.cloneNode(true));
 <script type="module">
 const ai = document.querySelector('msc-built-in-ai-prompt');
 
-if (ai.status === 'unsupported') {
+if (['unavailable', 'unsupported'].includes(ai.status)) {
   console.log('Current browser doesn\'t support Built-in AI.');
 } else {
   try {
@@ -105,7 +106,7 @@ if (ai.status === 'unsupported') {
 <script type="module">
 const ai = document.querySelector('msc-built-in-ai-prompt');
 
-if (ai.status === 'unsupported') {
+if (['unavailable', 'unsupported'].includes(ai.status)) {
   console.log('Current browser doesn\'t support Built-in AI.');
 } else {
   try {
@@ -128,7 +129,7 @@ if (ai.status === 'unsupported') {
 <script type="module">
 const ai = document.querySelector('msc-built-in-ai-prompt');
 
-if (ai.status === 'unsupported') {
+if (['unavailable', 'unsupported'].includes(ai.status)) {
   console.log('Current browser doesn\'t support Built-in AI.');
 } else {
   try {
@@ -189,7 +190,7 @@ if (ai.status === 'unsupported') {
 ## Properties
 | Property Name | Type | Description |
 | ----------- | ----------- | ----------- |
-| status | String | Getter current status. (`available`、`downloadable`、`downloading`、`unsupported`) |
+| status | String | Getter current status. (`available`、`downloadable`、`downloading`、`unsupported`、`unavailable`) |
 | inputUsage | Number | Getter current session input usage information. |
 | inputQuota | Number | Getter current session input quota information. |
 
@@ -212,6 +213,7 @@ if (ai.status === 'unsupported') {
 | msc-built-in-ai-prompt-download-progress | Fired when LLM downloading. Developers could gather result information through `event.detail`. |
 
 ## Reference
+- [&lt;msc-built-in-ai-prompt /> demo](https://blog.lalacube.com/mei/webComponent_msc-built-in-ai-prompt.html)
 - [Built-in AI Prompt](https://developer.chrome.com/docs/ai/prompt-api)
 - [YouTube tutorial](https://youtu.be/GdYxeXE4X8Q)
 - [WEBCOMPONENTS.ORG](https://www.webcomponents.org/element/msc-built-in-ai-prompt)
