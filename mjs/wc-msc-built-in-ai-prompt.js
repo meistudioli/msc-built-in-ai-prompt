@@ -152,11 +152,21 @@ export class MscBuiltInAiPrompt extends HTMLElement {
   }
 
   get inputUsage() {
-    return this.#data.session?.inputUsage;
+    console.warn(`Removed in Chrome 147.0.7699.3 and later.`);
+    return this.#data.session?.inputUsage || this.#data.session?.contextUsage;
   }
 
   get inputQuota() {
-    return this.#data.session?.inputQuota;
+    console.warn(`Removed in Chrome 147.0.7699.3 and later.`);
+    return this.#data.session?.inputQuota || this.#data.session?.contextWindow;
+  }
+
+  get contextUsage() {
+    return this.#data.session?.contextUsage;
+  }
+
+  get contextWindow() {
+    return this.#data.session?.contextWindow;
   }
 
   #fireEvent(evtName, detail) {
@@ -213,8 +223,25 @@ export class MscBuiltInAiPrompt extends HTMLElement {
       throw new Error(`Current browser doesn't support Built-in AI.`);
     }
 
+    console.warn(`Removed in Chrome 147.0.7699.3 and later.`);
+
     const session = await window.LanguageModel.create();
-    const count = await session.measureInputUsage(content);
+    // const count = await session.measureInputUsage(content);
+    const count = session.measureInputUsage
+      ? await session.measureInputUsage(content)
+      : await session.measureContextUsage(content);
+    session.destroy();
+
+    return count;
+  }
+
+  async measureContextUsage(content) {
+    if (['unavailable', 'unsupported'].includes(this.status)) {
+      throw new Error(`Current browser doesn't support Built-in AI.`);
+    }
+
+    const session = await window.LanguageModel.create();
+    const count = await session.measureContextUsage(content);
     session.destroy();
 
     return count;
