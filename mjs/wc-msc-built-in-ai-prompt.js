@@ -6,7 +6,8 @@ const booleanAttrs = []; // booleanAttrs default should be false
 const objectAttrs = [];
 const custumEvents = {
   ready: 'msc-built-in-ai-prompt-ready',
-  progress: 'msc-built-in-ai-prompt-download-progress'
+  progress: 'msc-built-in-ai-prompt-download-progress',
+  contextoverflow: 'msc-built-in-ai-prompt-contextoverflow'
 };
 const supported = !!window.LanguageModel;
 
@@ -215,7 +216,9 @@ export class MscBuiltInAiPrompt extends HTMLElement {
       throw new Error(`Current browser doesn't support Built-in AI.`);
     }
 
-    return await window.LanguageModel.params();
+    console.warn(`Removed in Chrome 147.0.7699.3 and later.`);
+
+    return await window.LanguageModel?.params?.();
   }
 
   async measureInputUsage(content) {
@@ -264,6 +267,10 @@ export class MscBuiltInAiPrompt extends HTMLElement {
         });
       },
     });
+
+    this.#data.session.onquotaoverflow = this.#data.session.oncontextoverflow = () => {
+      this.#fireEvent(custumEvents.contextoverflow);
+    };
 
     // multimodal
     if (multimodal && this.#data.session?.append) {

@@ -214,6 +214,7 @@ if (['unavailable', 'unsupported'].includes(ai.status)) {
 | ----------- | ----------- |
 | msc-built-in-ai-prompt-ready | Fired when LLM download done. |
 | msc-built-in-ai-prompt-download-progress | Fired when LLM downloading. Developers could gather result information through `event.detail`. |
+| msc-built-in-ai-prompt-contextoverflow | Fired when LLM > session context overflow. |
 
 ## Reference
 - [&lt;msc-built-in-ai-prompt /> demo](https://blog.lalacube.com/mei/webComponent_msc-built-in-ai-prompt.html)
