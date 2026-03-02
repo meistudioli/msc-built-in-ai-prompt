@@ -259,7 +259,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
 
     this.destroy();
 
-    this.#data.session = await window.LanguageModel.create({
+    const session = await window.LanguageModel.create({
       ...others,
       monitor: (m) => {
         m.addEventListener('downloadprogress', (evt) => {
@@ -268,14 +268,16 @@ export class MscBuiltInAiPrompt extends HTMLElement {
       },
     });
 
-    this.#data.session.onquotaoverflow = this.#data.session.oncontextoverflow = () => {
+    session.onquotaoverflow = session.oncontextoverflow = () => {
       this.#fireEvent(custumEvents.contextoverflow);
     };
 
     // multimodal
-    if (multimodal && this.#data.session?.append) {
-      await this.#data.session?.append?.(multimodal);
+    if (multimodal && session?.append) {
+      await session.append(multimodal);
     }
+
+    this.#data.session = session;
   }
 
   async prompt(data, option = {}) {
