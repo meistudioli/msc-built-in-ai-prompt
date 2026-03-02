@@ -274,7 +274,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
 
     // multimodal
     if (multimodal && this.#data.session?.append) {
-      await this.#data.session.append(multimodal);
+      await this.#data.session?.append(multimodal);
     }
   }
 
