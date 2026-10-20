@@ -268,9 +268,11 @@ export class MscBuiltInAiPrompt extends HTMLElement {
       },
     });
 
+    /*
     session.onquotaoverflow = session.oncontextoverflow = () => {
       this.#fireEvent(custumEvents.contextoverflow);
     };
+    */
 
     // multimodal
     if (multimodal && session.append) {
