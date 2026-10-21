@@ -191,8 +191,6 @@ if (['unavailable', 'unsupported'].includes(ai.status)) {
 | Property Name | Type | Description |
 | ----------- | ----------- | ----------- |
 | status | String | Getter current status. (`available`、`downloadable`、`downloading`、`unsupported`、`unavailable`) |
-| ~~inputUsage~~ | Number | Getter current session input usage information. (Removed in `Chrome 147.0.7699.3` and later.) |
-| ~~inputQuota~~ | Number | Getter current session input quota information. (Removed in `Chrome 147.0.7699.3` and later.) |
 | contextUsage | Number | Getter current session input usage information. |
 | contextWindow | Number | Getter current session input quota information. |
 
@@ -203,7 +201,6 @@ if (['unavailable', 'unsupported'].includes(ai.status)) {
 | prompt(content = '', options = {}) | Go prompt (non-streamed output). |
 | promptStreaming(content = '', options = {}) | Go prompt (streamed output). |
 | params() |The params() function informs you of the language model's parameters. |
-| ~~measureInputUsage(content)~~ | Measure how many token will be use for the content. (Removed in `Chrome 147.0.7699.3` and later.) |
 | measureContextUsage(content) | Measure how many token will be use for the content. |
 | destroy() | Destroy current session. |
 

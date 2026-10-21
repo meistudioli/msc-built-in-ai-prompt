@@ -4,7 +4,7 @@ import { _wccss } from './common-css.js';
 const defaults = {};
 const booleanAttrs = []; // booleanAttrs default should be false
 const objectAttrs = [];
-const custumEvents = {
+const customEvents = {
   ready: 'msc-built-in-ai-prompt-ready',
   progress: 'msc-built-in-ai-prompt-download-progress',
   contextoverflow: 'msc-built-in-ai-prompt-contextoverflow'
@@ -54,6 +54,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
     // data
     this.#data = {
       controller: '',
+      controllerForSession: '',
       session: ''
     };
 
@@ -70,6 +71,7 @@ export class MscBuiltInAiPrompt extends HTMLElement {
 
     // evts
     this._onClick = this._onClick.bind(this);
+    this._onContextoverflow = this._onContextoverflow.bind(this);
   }
 
   async connectedCallback() {
@@ -97,14 +99,13 @@ export class MscBuiltInAiPrompt extends HTMLElement {
     // init
     await this.#statusCheck();
     if (this.status === 'available') {
-      this.#fireEvent(custumEvents.ready);
+      this.#fireEvent(customEvents.ready);
     }
   }
 
   disconnectedCallback() {
-    if (this.#data?.controller) {
-      this.#data.controller.abort();
-    }
+    this.#data.controller?.abort?.();
+    this.#data.controllerForSession?.abort?.();
   }
 
   static get observedAttributes() {
@@ -112,9 +113,9 @@ export class MscBuiltInAiPrompt extends HTMLElement {
   }
 
   static get supportedEvents() {
-    return Object.keys(custumEvents).map(
+    return Object.keys(customEvents).map(
       (key) => {
-        return custumEvents[key];
+        return customEvents[key];
       }
     );
   }
@@ -128,7 +129,8 @@ export class MscBuiltInAiPrompt extends HTMLElement {
         delete this[prop];
       } else {
         if (booleanAttrs.includes(prop)) {
-          value = (this.hasAttribute(prop) || this.#config[prop]) ? true : false;
+          // value = (this.hasAttribute(prop) || this.#config[prop]) ? true : false;
+          value = Boolean(this.hasAttribute(prop) || this.#config[prop]);
         } else if (objectAttrs.includes(prop)) {
           value = this.hasAttribute(prop) ? this.getAttribute(prop) : JSON.stringify(this.#config[prop]);
         } else {
@@ -150,16 +152,6 @@ export class MscBuiltInAiPrompt extends HTMLElement {
 
   get status() {
     return this.#config.status;
-  }
-
-  get inputUsage() {
-    console.warn(`Removed in Chrome 147.0.7699.3 and later.`);
-    return this.#data.session?.inputUsage || this.#data.session?.contextUsage;
-  }
-
-  get inputQuota() {
-    console.warn(`Removed in Chrome 147.0.7699.3 and later.`);
-    return this.#data.session?.inputQuota || this.#data.session?.contextWindow;
   }
 
   get contextUsage() {
@@ -187,11 +179,11 @@ export class MscBuiltInAiPrompt extends HTMLElement {
     if (progress === 100) {
       this.toggleAttribute('data-progress', false);
       await this.#statusCheck();
-      this.#fireEvent(custumEvents.ready);
+      this.#fireEvent(customEvents.ready);
     } else {
       this.dataset.status = 'downloading';
       this.dataset.progress = progress;
-      this.#fireEvent(custumEvents.progress, { progress });
+      this.#fireEvent(customEvents.progress, { progress });
     }
   }
 
@@ -207,7 +199,12 @@ export class MscBuiltInAiPrompt extends HTMLElement {
     }
   }
 
+  _onContextoverflow() {
+    this.#fireEvent(customEvents.contextoverflow);
+  }
+
   destroy() {
+    this.#data.controllerForSession?.abort?.();
     this.#data.session?.destroy?.();
   }
 
@@ -219,23 +216,6 @@ export class MscBuiltInAiPrompt extends HTMLElement {
     console.warn(`Removed in Chrome 147.0.7699.3 and later.`);
 
     return await window.LanguageModel?.params?.();
-  }
-
-  async measureInputUsage(content) {
-    if (['unavailable', 'unsupported'].includes(this.status)) {
-      throw new Error(`Current browser doesn't support Built-in AI.`);
-    }
-
-    console.warn(`Removed in Chrome 147.0.7699.3 and later.`);
-
-    const session = await window.LanguageModel.create();
-    // const count = await session.measureInputUsage(content);
-    const count = session.measureInputUsage
-      ? await session.measureInputUsage(content)
-      : await session.measureContextUsage(content);
-    session.destroy();
-
-    return count;
   }
 
   async measureContextUsage(content) {
@@ -268,11 +248,10 @@ export class MscBuiltInAiPrompt extends HTMLElement {
       },
     });
 
-    /*
-    session.onquotaoverflow = session.oncontextoverflow = () => {
-      this.#fireEvent(custumEvents.contextoverflow);
-    };
-    */
+    // event
+    this.#data.controllerForSession = new AbortController();
+    const signal = this.#data.controllerForSession.signal;
+    session.addEventListener('contextoverflow', this._onContextoverflow, { signal });
 
     // multimodal
     if (multimodal && session.append) {
